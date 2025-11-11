@@ -94,4 +94,7 @@ public:
     // 죽었을 때 아래로 사라지는 속도 -> 일정 좌표 이상 낮아지면 Destroy할 예정
     UPROPERTY(EditAnywhere, Category=FSM)
     float dieSpeed = 50.0f;
+
+    UPROPERTY(EditDefaultsOnly, Category=FSM)
+    class UEnemyAnim* anim;
 };

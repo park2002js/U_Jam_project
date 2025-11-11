@@ -24,6 +24,14 @@ AEnemy::AEnemy()
     // 2. EnemyFSM 컴포넌트를 Enemy 인스턴스에 추가
     // fsm은 헤더에 선언됨 -> 사실상 헤더를 include하는 모든 cpp 사이에서 쓰이는 전역 변수
     fsm = CreateDefaultSubobject<UEnemyFSM>(TEXT("FSM"));
+
+    // 3. 애니메이션 블루프린트 할당
+    ConstructorHelpers::FClassFinder<UAnimInstance> tempClass(TEXT("AnimBlueprint'/Game/A_WorkSpace/PJS/Blueprints/ABP_TempEnemy.ABP_TempEnemy_C'"));
+    if (tempClass.Succeeded())
+    {
+        UE_LOG(LogTemp, Display, TEXT("애니메이션 블루프린트 할당 성공"));
+        GetMesh()->SetAnimInstanceClass(tempClass.Class);
+    }
 }
 
 // Called when the game starts or when spawned

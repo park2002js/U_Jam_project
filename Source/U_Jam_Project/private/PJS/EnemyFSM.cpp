@@ -3,6 +3,7 @@
 #include <Kismet/GameplayStatics.h>
 #include "PJS/EnemyFSM.h"
 #include "PJS/Enemy.h"
+#include "PJS/EnemyAnim.h"
 #include <Components/CapsuleComponent.h>
 
 // Sets default values for this component's properties
@@ -16,15 +17,22 @@ UEnemyFSM::UEnemyFSM()
 }
 
 
+
 // Called when the game starts
 void UEnemyFSM::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// 월드에서 Player target 가져오기
+	// 월드에서 Player 가져오기
+    
+
     auto actor = UGameplayStatics::GetActorOfClass(GetWorld(), targetClass); // GetActorOfClass(GetWorld(), TPSPlayer::StaticClass());
     target = Cast<ACharacter>(actor);
-    me = Cast<AEnemy>(GetOwner());
+    me = Cast<AEnemy>(GetOwner());     // EnemyFSM 코드를 가지고 있는 인스턴스(Enemy)를 가져와 me에 할당
+    
+    UE_LOG(LogTemp, Display, TEXT("애니메이션 블루프린트 할당 준비 중"))
+    anim = Cast<UEnemyAnim>(me->GetMesh()->GetAnimInstance()); // AnimIntance 자식인 UEnemyAnim을 가져옴
+    if(!anim) { UE_LOG(LogTemp, Display, TEXT("애니메이션 블루프린트 로드 실패")); }
 }
 
 
@@ -69,6 +77,9 @@ void UEnemyFSM::IdleState()  // 대기 상태
     {
         // 현재 상태를 이동상태로 전환 -> 다음 Tick부터 Switch 문에서 Move 상태 함수 호출됨
         mState = EEnemyState::Move;
+        
+        // 애니메이션 동기화
+        anim->animState = mState;
 
         // 경과 시간 초기화
         currentTime = 0;
@@ -88,6 +99,13 @@ void UEnemyFSM::MoveState() {  // 이동
     if (dir.Size() < attackRange) // dir.size = distance
     {
         mState = EEnemyState::Attack;
+
+        // 애니메이션 동기화
+        anim->animState = mState;
+        // 공격 애니메이션 재생 활성화
+        anim->bAttackPlay = true;
+        // 공격 상태 전환 시 대기 시간이 바로 끝나도록 처리 = 외부에서 공격 상태 되면 바로 공격
+        currentTime = attackDelayTime;
     }
 }
 
@@ -102,6 +120,7 @@ void UEnemyFSM::AttackState() {  // 공격 (to Player)
         UE_LOG(LogTemp, Display, TEXT("attack"));
 
         currentTime = 0;
+        anim->bAttackPlay = true;
     }
     
     // 상대 위치에서 현 위치 빼서 거리 구하기
@@ -110,6 +129,9 @@ void UEnemyFSM::AttackState() {  // 공격 (to Player)
     if (distance > attackRange)
     {
         mState = EEnemyState::Move;
+
+        // 애니메이션 동기화
+        anim->animState = mState;
     }
 }
 // 어떤 상태에서든 이 함수가 호출되면 피격 혹은 죽음 상태로 변경됨
@@ -122,6 +144,8 @@ void UEnemyFSM::OnDamageProcess()
     if (hp)
     {
         mState = EEnemyState::Damage;
+
+        
     }
     else // 체력 없으면 죽음 상태로 전환
     {
@@ -129,6 +153,9 @@ void UEnemyFSM::OnDamageProcess()
         // 죽었으므로 Destroy되기 전까지 물리작용 없도록 Collision 비활성화 해야 함
         me->GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
     }
+
+    // 애니메이션 동기화
+    anim->animState = mState;
 }
 
 void UEnemyFSM::DamageState() // 피격
@@ -139,6 +166,8 @@ void UEnemyFSM::DamageState() // 피격
     if (currentTime > damageDelayTime)
     {
         mState = EEnemyState::Move;
+        // 애니메이션 동기화
+        anim->animState = mState;
         currentTime = 0;
     }
 }
@@ -156,5 +185,3 @@ void UEnemyFSM::DieState()   // 죽음
         me->Destroy();
     }
 }
-
-
