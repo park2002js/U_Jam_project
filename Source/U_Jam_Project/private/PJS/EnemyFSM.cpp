@@ -16,8 +16,6 @@ UEnemyFSM::UEnemyFSM()
 	// ...
 }
 
-
-
 // Called when the game starts
 void UEnemyFSM::BeginPlay()
 {
@@ -184,4 +182,9 @@ void UEnemyFSM::DieState()   // 죽음
     {
         me->Destroy();
     }
+}
+
+bool UEnemyFSM::CanApplyDamage()
+{
+    return anim->bAttackDamageEnable;
 }

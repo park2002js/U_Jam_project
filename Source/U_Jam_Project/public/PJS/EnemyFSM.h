@@ -95,6 +95,15 @@ public:
     UPROPERTY(EditAnywhere, Category=FSM)
     float dieSpeed = 50.0f;
 
-    UPROPERTY(EditDefaultsOnly, Category=FSM)
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category=FSM)
     class UEnemyAnim* anim;
+
+
+    // 블루프린트로 TakeDamage를 구현했을 때, 블루프린트에서 이 함수의 반환값으로 Player에게 Damage를 줄 것인지 
+    // 여부를 결정할 수 있도록, 함수를 호출해 확인할 수 있도록 함
+    UFUNCTION(BlueprintCallable, Category = FSM)
+    bool CanApplyDamage();
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = FSM)
+    TArray<AActor*> exceptActors;
 };

@@ -7,3 +7,13 @@ void UEnemyAnim::OnEndAttackAnimation()
 {
     bAttackPlay = false;
 }
+
+void UEnemyAnim::OnAttackDamageStart()
+{
+    bAttackDamageEnable = true;
+}
+
+void UEnemyAnim::OnAttackDamageEnd()
+{
+    bAttackDamageEnable = false;
+}
