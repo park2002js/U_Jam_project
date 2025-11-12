@@ -137,7 +137,7 @@ void UEnemyFSM::OnDamageProcess()
 {
     // 함수 호출시 체력 감소
     hp--;
-
+    UE_LOG(LogTemp, Display, TEXT("Damaged!!"));
     // 체력이 남아있으면 피격 상태로 전환
     if (hp)
     {

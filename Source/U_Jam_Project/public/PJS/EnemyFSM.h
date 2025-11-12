@@ -85,7 +85,7 @@ public:
 
     // Hp 체력, 블루프린트에서 노드로 사용가능하도록 BlueprintReadWrite 속성 부여함
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category=FSM)
-    int32 hp = 3;
+    int32 hp = 30;
 
     // 피격시 적이 얼타는 시간, 그러나 보스전에서는 크게 의미 없을 듯?
     UPROPERTY(EditDefaultsOnly, Category=FSM)
