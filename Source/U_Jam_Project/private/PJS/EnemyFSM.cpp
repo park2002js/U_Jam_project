@@ -156,6 +156,24 @@ void UEnemyFSM::OnDamageProcess()
     anim->animState = mState;
 }
 
+// Die면 True, Damage면 False
+void UEnemyFSM::OnDieOrDamage(bool die)
+{
+    if (!die)
+    {
+        mState = EEnemyState::Damage;
+
+
+    }
+    else // 체력 없으면 죽음 상태로 전환
+    {
+        mState = EEnemyState::Die;
+        // 죽었으므로 Destroy되기 전까지 물리작용 없도록 Collision 비활성화 해야 함
+        me->GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+    }
+    anim->animState = mState;
+}
+
 void UEnemyFSM::DamageState() // 피격
 {
     // 시간은 매 상태 호출때마다 갱신, 상태호출은 매 tick마다 이뤄짐, frame 영향 없게 DeltaTime 사용
