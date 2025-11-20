@@ -83,6 +83,11 @@ public:
     UFUNCTION(BlueprintCallable, Category = FSM)
     void OnDamageProcess();
 
+    // * 임시로 추가한, BluePrint에서 호출해서 처리하도록 만든 것
+    UFUNCTION(BlueprintCallable, Category = FSM)
+    void OnDieOrDamage(bool die);
+
+
     // Hp 체력, 블루프린트에서 노드로 사용가능하도록 BlueprintReadWrite 속성 부여함
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category=FSM)
     int32 hp = 30;
